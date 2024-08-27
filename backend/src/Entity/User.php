@@ -21,6 +21,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use DateTime;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: "users", options:["engine"=> "InnoDB"])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PHONE', fields: ['phone'])]
@@ -123,6 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private DateTime $updatedAt;
 
+    private ?string $fullName = null;
 
     public function getId(): ?int
     {
@@ -623,6 +625,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    #[ORM\PostLoad()]
+    public function initFullName()
+    {
+        $this->fullName = $this->firstName . ' ' . $this->lastName;
+    }
+
+    /**
+     * Get the value of fullName
+     *
+     * @return ?string
+     */
+    public function getFullName(): ?string
+    {
+        return $this->fullName;
+    }
+
+    /**
+     * Set the value of fullName
+     *
+     * @param ?string $fullName
+     *
+     * @return self
+     */
+    public function setFullName(?string $fullName): self
+    {
+        $this->fullName = $fullName;
 
         return $this;
     }

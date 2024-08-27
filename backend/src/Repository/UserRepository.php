@@ -51,7 +51,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function findByCredential($credential){
+    public function findByCredential($credential): ?User {
         return $this->createQueryBuilder('x')
             ->andWhere('x.email = :email AND x.confirmed = 1')
             ->setParameter('email', $credential)
@@ -59,7 +59,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function findByEmail(string $email, int $id = 0){
+    public function findByEmail(string $email, int $id = 0): ?User {
         return $this->createQueryBuilder('x')
             ->andWhere('x.email = :email AND x.id <> :id')
             ->setParameter('email', $email)
@@ -68,7 +68,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function findByPhone(string $phone, int $id = 0){
+    public function findByPhone(string $phone, int $id = 0): ?User {
         return $this->createQueryBuilder('x')
             ->andWhere('x.phone = :phone AND x.id <> :id')
             ->setParameter('phone', $phone)
@@ -77,7 +77,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function findByConfirmToken(string $token){
+    public function findByConfirmToken(string $token): ?User {
         return $this->createQueryBuilder('x')
             ->andWhere('x.confirmToken = :token AND x.confirmed = 0')
             ->setParameter('token', $token)
@@ -85,10 +85,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
-    public function findByResetToken(string $token){
+    public function findByResetToken(string $token, string $email): ?User {
         return $this->createQueryBuilder('x')
-            ->andWhere('x.resetToken = :token AND x.confirmed = 1')
+            ->andWhere('x.resetToken = :token AND x.confirmed = 1 AND x.email = :email')
             ->setParameter('token', $token)
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findByUserId(User $user) : array{
+        return $this->createQueryBuilder('x')
+            ->select([
+                'x.email',
+                'x.roles',
+                'x.phone',
+                'x.image',
+                'x.firstName',
+                'x.lastName',
+                'x.gender',
+                'x.country',
+                'x.facebook',
+                'x.instagram',
+                'x.twitter',
+                'x.linkedIn',
+                'x.aboutMe',
+                'x.address'
+            ])
+            ->where("x.id = :user")
+            ->setParameter("user", $user)
             ->getQuery()
             ->getOneOrNullResult();
     }

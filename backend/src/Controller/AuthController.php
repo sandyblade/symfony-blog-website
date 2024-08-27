@@ -17,12 +17,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Requests\RegisterRequest;
 use App\Requests\ForgotPasswordRequest;
+use App\Requests\ResetPasswordRequest;
 use Faker\Factory;
 use App\Entity\User;
+use App\Entity\Activity;
 
 #[Route('api/auth')]
 class AuthController extends AbstractController
@@ -76,6 +77,8 @@ class AuthController extends AbstractController
         $this->em->persist($user);
         $this->em->flush();
 
+        $this->em->getRepository(Activity::class)->Create($user, "Sign Up", "Register new user account");
+
         return new JsonResponse(["message"=> "You need to confirm your account. We have sent you an activation code, please check your email."], 200);
     }
 
@@ -95,10 +98,12 @@ class AuthController extends AbstractController
         $this->em->persist($user);
         $this->em->flush();
 
+        $this->em->getRepository(Activity::class)->Create($user, "Email Verification", "Confirm new member registration account");
+
         return new JsonResponse(["message"=> "Your e-mail is verified. You can now login."]);
     }
 
-    #[Route('/forgot', methods: ["POST"], name: 'api_auth_forgot')]
+    #[Route('/email/forgot', methods: ["POST"], name: 'api_auth_forgot')]
     public function forgot(ForgotPasswordRequest $request): JsonResponse
     {
         $errors = $request->validate();
@@ -125,13 +130,48 @@ class AuthController extends AbstractController
         $this->em->persist($user);
         $this->em->flush();
 
+        $this->em->getRepository(Activity::class)->Create($user, "Forgot Password", "Request reset password link");
+
         return new JsonResponse(["message"=>"We have e-mailed your password reset link!"], 200);
     }
 
-    #[Route('/reset/{token}', methods: ["POST"], name: 'api_auth_reset')]
-    public function reset(string $token, Request $request): JsonResponse
+    #[Route('/email/reset/{token}', methods: ["POST"], name: 'api_auth_reset')]
+    public function reset(string $token, ResetPasswordRequest $request): JsonResponse
     {
-        return new JsonResponse();
+        $errors = $request->validate();
+
+        if($errors)
+        {
+            return $errors;
+        }
+
+        $input = $request->getInput();
+        $email = $input->email;
+        $password = $input->password;
+        $passwordConfirm = $input->passwordConfirm;
+        $passwordHasher = $this->passwordHasherFactory->getPasswordHasher(User::class);
+        $hash = $passwordHasher->hash($password);
+
+        if($password != $passwordConfirm)
+        {
+            return new JsonResponse(["message"=>"The password confirmation does not match.!"], 400);
+        }
+
+        $user = $this->em->getRepository(User::class)->findByResetToken($token, $email);
+
+        if(null === $user)
+        {
+            return new JsonResponse(["message"=>"We can't find a user with that e-mail address or password reset token is invalid."], 400);
+        }
+
+        $user->setPassword($hash);
+        $user->setResetToken(null);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $this->em->getRepository(Activity::class)->Create($user, "Reset Password", "Reset account password");
+
+        return new JsonResponse(["message"=>"Your password has been reset!"]);
     }
 
 }
