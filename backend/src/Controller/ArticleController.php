@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Faker\Factory;
 use App\Requests\ArticleRequest;
 use App\Entity\Activity;
 use App\Entity\Article;
@@ -38,6 +39,11 @@ class ArticleController extends AbstractController
     {
         $request = $request->query->all();
         $data = $this->em->getRepository(Article::class)->findList($request);
+        $data = array_map(function($row){
+            $row["json_categories"] = json_decode($row["categories"]);
+            $row["json_tags"] = json_decode($row["tags"]);
+            return $row;
+        }, $data);
         return new JsonResponse($data);
     }
 
@@ -128,6 +134,7 @@ class ArticleController extends AbstractController
         return new JsonResponse(["message"=> "ok", "data"=> $payload]);
     }
 
+    #[Route('/update/{id}', methods: ["PUT"], name: 'api_article_update')]
     public function update(int $id, ArticleRequest $request) : JsonResponse
     {
         $errors = $request->validate();
@@ -191,6 +198,7 @@ class ArticleController extends AbstractController
         return new JsonResponse(["message"=> "ok", "data"=> $payload]);
     }
 
+    #[Route('/remove/{id}', methods: ["DELETE"], name: 'api_article_delete')]
     public function remove(int $id) : JsonResponse
     {
         /** @var User $user */
@@ -213,24 +221,84 @@ class ArticleController extends AbstractController
 
     }
 
-    #[Route('/user', methods: ["GET"], name: 'api_article_list')]
+    #[Route('/user', methods: ["GET"], name: 'api_article_user')]
     public function user(Request $request)  : JsonResponse
     {
         /** @var User $user */
         $user  = $this->getUser();
         $request = $request->query->all();
         $data = $this->em->getRepository(Article::class)->findListUser($request, $user);
+        $data = array_map(function($row){
+            $row["json_categories"] = json_decode($row["categories"]);
+            $row["json_tags"] = json_decode($row["tags"]);
+            return $row;
+        }, $data);
         return new JsonResponse($data);
     }
 
-    public function words() : JsonResponse
+    #[Route('/words', methods: ["GET"], name: 'api_article_words')]
+    public function words(Request $request) : JsonResponse
     {
-        return new JsonResponse();
+        $result = [];
+        $params = $request->query->all();
+        $max = array_key_exists("max", $params) ?  $params["max"] : 100;
+
+        for($i = 1; $i <= $max; $i++)
+        {
+            $faker = Factory::create();
+            $result[] = ucfirst($faker->word." ".$faker->word);
+        }
+
+        sort($result);
+
+        return new JsonResponse($result);
     }
 
-    public function upload() : JsonResponse
+    #[Route('/upload/{id}', methods: ["POST"], name: 'api_article_uploads')]
+    public function upload(int $id, Request $request) : JsonResponse
     {
-        return new JsonResponse();
+        /** @var User $user */
+        $user  = $this->getUser();
+
+        $article = $this->em->getRepository(Article::class)->findById($user, $id);
+
+        if(null === $article)
+        {
+            return new JsonResponse(["message"=>"Article with id ".$id." was not found.!!"], 400);
+        }
+
+        $image = $article->getImage();
+
+        if($request->files->get('file_image'))
+        {
+            $uploadPath = $this->getParameter('kernel.project_dir') . '/public/uploads'; 
+            if(!is_dir($uploadPath)){
+                @mkdir($uploadPath);
+            }
+
+            if(!is_null($article->getImage())){
+                $file_path_current = $this->getParameter('kernel.project_dir') . '/public/'.$article->getImage(); 
+                if(file_exists($file_path_current)){
+                    @unlink($file_path_current);
+                }
+            }
+
+            $file = $request->files->get('file_image');
+            $newFileName = md5(uniqid()) . '.' . $file->guessExtension();
+            $move = $file->move($uploadPath, $newFileName);
+
+            if($move)
+            {
+                $article->setImage("uploads/".$newFileName);
+                $this->em->persist($article);
+                $this->em->flush();
+                $this->em->getRepository(Activity::class)->Create($user, "Upload Image", "Upload article image");
+                $image = $article->getImage(); 
+            }
+
+        }
+
+        return new JsonResponse(["message"=> "Your article image has been uploaded", "data"=> $image]);
     }
 
     private function slugify($text, string $divider = '-')

@@ -41,6 +41,8 @@ security:
         - { path: ^/api/article/upload,    roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/article/user,      roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/comment,           roles: PUBLIC_ACCESS }
+        - { path: ^/api/comment/create,    roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/comment/remove,    roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api,                   roles: IS_AUTHENTICATED_FULLY  }
 
 when@test:

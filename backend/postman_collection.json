@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "075b18c5-6a07-41d6-a52f-ed38c51291e8",
+		"_postman_id": "e09764e6-a535-40c9-803a-ca828acb7adb",
 		"name": "Symfony REST API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20338099"
+		"_exporter_id": "17401019"
 	},
 	"item": [
 		{
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"anabel30@example.net\",\r\n    \"password\":\"P@ssw0rd!123\"\r\n}",
+							"raw": "{\r\n    \"username\":\"Bernier.Sylvan@example.net\",\r\n    \"password\":\"P@ssw0rd!123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -72,14 +72,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}api/auth/confirm/4e3e742c-f23e-3442-a886-455515e785d4",
+							"raw": "{{baseURL}}api/auth/confirm/6c52bd5d-6485-3974-89b8-362124c0d705",
 							"host": [
 								"{{baseURL}}api"
 							],
 							"path": [
 								"auth",
 								"confirm",
-								"4e3e742c-f23e-3442-a886-455515e785d4"
+								"6c52bd5d-6485-3974-89b8-362124c0d705"
 							]
 						}
 					},
@@ -92,7 +92,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"sandyandryanto001@yahoo.com\"\r\n}",
+							"raw": "{\r\n    \"email\":\"sandyandryanto@gmail003.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -120,7 +120,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"sandyandryanto001@yahoo.com\",\r\n    \"password\":\"P@ssw0rd!123\",\r\n    \"passwordConfirm\":\"P@ssw0rd!123\"\r\n}",
+							"raw": "{\r\n    \"email\":\"sandyandryanto@gmail003.com\",\r\n    \"password\":\"P@ssw0rd!123\",\r\n    \"password_confirmation\":\"P@ssw0rd!123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -128,7 +128,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}api/auth/email/reset/ffc0abe0-dcc4-37d0-8716-11200126f14c",
+							"raw": "{{baseURL}}api/auth/email/reset/44f45b78-dca1-3056-95d5-d7e62b6ced7f",
 							"host": [
 								"{{baseURL}}api"
 							],
@@ -136,7 +136,7 @@
 								"auth",
 								"email",
 								"reset",
-								"ffc0abe0-dcc4-37d0-8716-11200126f14c"
+								"44f45b78-dca1-3056-95d5-d7e62b6ced7f"
 							]
 						}
 					},
@@ -172,7 +172,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"josianne06@example.net\",\r\n    \"phone\": \"333333\",\r\n    \"image\": null,\r\n    \"first_name\": \"Larue\",\r\n    \"last_name\": \"DuBuque\",\r\n    \"gender\": \"M\",\r\n    \"country\": \"Haiti\",\r\n    \"facebook\": \"slueilwitz\",\r\n    \"instagram\": \"hal.schmeler\",\r\n    \"twitter\": \"fhickle\",\r\n    \"linked_in\": \"hhoeger\",\r\n    \"address\": \"90033 Abe Ports Apt. 283\",\r\n    \"about_me\": \"Repellendus qui excepturi sapiente blanditiis debitis. Laboriosam eius facilis sunt quia. Qui earum et adipisci iusto delectus est. Voluptatem ut qui sit et odit quia odio doloribus.\"\r\n}",
+							"raw": "{\r\n    \"email\": \"Bernier.Sylvan@example.net\",\r\n    \"phone\": \"6589506871\",\r\n    \"image\": null,\r\n    \"firstName\": \"Sandy\",\r\n    \"lastName\": \"Andryanto\",\r\n    \"gender\": \"M\",\r\n    \"country\": \"Indonesia\",\r\n    \"facebook\": \"slueilwitz\",\r\n    \"instagram\": \"hal.schmeler\",\r\n    \"twitter\": \"fhickle\",\r\n    \"linkedIn\": \"hhoeger\",\r\n    \"address\": \"90033 Abe Ports Apt. 283\",\r\n    \"aboutMe\": \"Repellendus qui excepturi sapiente blanditiis debitis. Laboriosam eius facilis sunt quia. Qui earum et adipisci iusto delectus est. Voluptatem ut qui sit et odit quia odio doloribus.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -199,7 +199,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"curentPassword\":\"P@ssw0rd!123\",\r\n    \"password\":\"P@ssw0rd!123\",\r\n    \"passwordConfirm\":\"P@ssw0rd!123\"\r\n}",
+							"raw": "{\r\n    \"current_password\":\"P@ssw0rd!123\",\r\n    \"password\":\"P@ssw0rd!123\",\r\n    \"password_confirmation\":\"P@ssw0rd!123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -230,7 +230,7 @@
 								{
 									"key": "file_image",
 									"type": "file",
-									"src": []
+									"src": "/C:/Users/MKI-007/Pictures/garfield_PNG39.png"
 								}
 							]
 						},
@@ -271,7 +271,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}api/account/activity?search=image",
+							"raw": "{{baseURL}}api/account/activity",
 							"host": [
 								"{{baseURL}}api"
 							],
@@ -282,7 +282,8 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "image"
+									"value": "asdasdasd",
+									"disabled": true
 								}
 							]
 						}
@@ -389,7 +390,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"What is Lorem Ipsum 3\",\r\n    \"description\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s\",\r\n    \"content\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\",\r\n    \"status\": 1,\r\n    \"categories\":[\"Sport\",\"News\",\"Technology\",\"Culinary\",\"Politic\",\"Economic\"],\r\n    \"tags\":[\"Favorite\",\"Hot News\",\"Best Seller\"]\r\n}",
+							"raw": "{\r\n    \"title\": \"What is Lorem Ipsum 4\",\r\n    \"description\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s\",\r\n    \"content\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\",\r\n    \"status\": 1,\r\n    \"categories\":[\"Sport\",\"News\",\"Technology\",\"Culinary\",\"Politic\",\"Economic\"],\r\n    \"tags\":[\"Favorite\",\"Hot News\",\"Best Seller\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -462,14 +463,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}api/article/remove/2",
+							"raw": "{{baseURL}}api/article/remove/3",
 							"host": [
 								"{{baseURL}}api"
 							],
 							"path": [
 								"article",
 								"remove",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -523,13 +524,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}api/article/upload",
+							"raw": "{{baseURL}}api/article/upload/4",
 							"host": [
 								"{{baseURL}}api"
 							],
 							"path": [
 								"article",
-								"upload"
+								"upload",
+								"4"
 							]
 						}
 					},
@@ -614,7 +616,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjQ3MTkwMDEsImV4cCI6MTcyNDcyMjYwMSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiYW5hYmVsMzBAZXhhbXBsZS5uZXQifQ.iPdFQuprDvmAPO6URpwcRK8FpI0lCLcWHgVfjl30h0JqfaGugx-KG78dgyN1jpH9GZyRQh50JIfe12I0MGqEqX-8T_sNphijNvYWnTgLAnkHP2f22Ww52pPd8Y4jVa62YrTShc5TjMRfi_oh63-3NxeXKdvhZ6LcU_GIws5y7NNnNCFziZZsWMMjD33oSX37YiFy3KpFnZc389BDBYlPFesxVP8BdhWQayZTbsEal0V_EWs-UBk_14Foid4iCt1MsOVBResJ3TLFNYBW1VG5PUYYARHsgOWNFVrJnMu9QbyfHqtiCHfu0Q2JTE9s5q8IqWikWkPLN7ps7dqNlmtunQ",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjQ3NDMyODAsImV4cCI6MTcyNDc0Njg4MCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiQmVybmllci5TeWx2YW5AZXhhbXBsZS5uZXQifQ.ODPbkuId7eEWvZY7lqN4FkuICZngX0HZs2FIVXwBleqcx2M-CKyRLQ-shg_f56kknXlQbm2QDipHoIDkNeXWN4el_7meXJx_IbZug9ngqhQr3Vp-wQgAYzsI_xVFFfO8-gkAvPkpPeyl8e6IN0Qj4aBhAROGG8sz_5VKkkdGFgk9YUEP9uIerpGe0B5YCUvbK6rLlRxX-mPhY-SEQ0t8TdKcryWdPlF7Vgxn773X6MHmHWePIslmRjfWYeGllogYLTNS6jIMN1J3WQiBpm_5u7rzp04Ybg_EOmfKCnlJgYt94dJsTnMT-SGOJlMIkHV66jWxt76sg0RWfbjp3OlAZQ",
 				"type": "string"
 			}
 		]

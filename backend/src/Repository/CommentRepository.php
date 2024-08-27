@@ -14,7 +14,9 @@
  
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Comment;
+use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,28 +30,54 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
-    //    /**
-    //     * @return Comment[] Returns an array of Comment objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findById(User $user, int $id) : ?Comment
+    {
+        return $this->createQueryBuilder('x')
+            ->andWhere('x.id = :id AND x.user = :user')
+            ->setParameter('id', $id)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Comment
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findByArticle(Article $article){
+        $columns = [
+            'x.id',
+            'us.email',
+            'us.firstName',
+            'us.lastName',
+            'x.comment',
+            'x.createdAt',
+            'x.updatedAt'
+        ];
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select($columns);
+        $qb->where("x.article = :article");
+        $qb->setParameter('article', $article);
+        $qb->addSelect('pr.id AS parent_id');
+        $qb->addOrderBy("x.id", "ASC");
+        $qb->from(Comment::class, 'x');
+        $qb->leftJoin('x.user', 'us');
+        $qb->leftJoin('x.parent', 'pr');
+        $result = $qb->getQuery()->getResult();
+        return $this->buildTree($result);
+    }
+
+    private function buildTree(array &$elements, $parent = null) {
+        $branch = array();
+        foreach ($elements as $element) {
+            if ($element['parent_id'] == $parent) {
+                $children = self::buildTree($elements, $element['id']);
+                if ($children) {
+                    $element['children'] = $children;
+                }else{
+                    $element['children'] = [];
+                }
+                $branch[] = $element;
+                unset($elements[$element['id']]);
+            }
+        }
+        return $branch;
+    }
+
 }
