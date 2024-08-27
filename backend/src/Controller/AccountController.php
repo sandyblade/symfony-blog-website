@@ -17,6 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Requests\ChangePasswordRequest;
 use App\Requests\ProfileUpdateRequest;
@@ -100,20 +103,78 @@ class AccountController extends AbstractController
         }
 
         /** @var User $user */
-        $user = $this->getUser();
-        $user_id = $user->getId();
-
-        $input = $request->getInput();
-        $email = $input->email;
-
+        $user       = $this->getUser();
+        $user_id    = $user->getId();
+        $input      = $request->getInput();
+        $email      = $input->email;
+        $phone      = $input->phone;
+        $firstName  = $input->firstName;
+        $lastName   = $input->lastName;
+        $gender     = $input->gender;
+        $country    = $input->country;
+        $facebook   = $input->facebook;
+        $instagram  = $input->instagram;
+        $twitter    = $input->twitter;
+        $linkedIn   = $input->linkedIn;
+        $address    = $input->address;
+        $aboutMe    = $input->aboutMe;
         $checkEmail = $this->em->getRepository(User::class)->findByEmail($email, $user_id);
+        $checkPhone = $this->em->getRepository(User::class)->findByPhone($phone, $user_id);
 
         if(null !== $checkEmail)
         {
             return new JsonResponse(["message"=>"The email has already been taken.!"], 400);
         }
 
-        return new JsonResponse(["message"=> "Your profile has been changed!!"]);
+        if(null !== $checkPhone)
+        {
+            return new JsonResponse(["message"=>"The phone number has already been taken.!"], 400);
+        }
+
+        $user->setEmail($email);
+        $user->setPhone($phone);
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
+        $user->setGender($gender);
+        $user->setCountry($country);
+        $user->setFacebook($facebook);
+        $user->setTwitter($twitter);
+        $user->setInstagram($instagram);
+        $user->setLinkedIn($linkedIn);
+        $user->setAddress($address);
+        $user->setAboutMe($aboutMe);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $this->em->getRepository(Activity::class)->Create($user, "Update Profile", "Edit user profile account");
+
+        $data = $this->em->getRepository(User::class)->findByUserId($user);
+        $data["fullName"] = $user->getFullName();
+        $data["genderName"] = $user->getGender() == 'M' ? 'Male' : 'Female';
+
+        return new JsonResponse(["message"=> "Your profile has been changed!!", "data"=> $data]);
+    }
+
+    #[Route('/activity', methods: ["GET"], name: 'api_account_activity')]
+    public function activity(Request $request)  : JsonResponse
+    {
+        $user = $this->getUser();
+        $request = $request->query->all();
+        $data = $this->em->getRepository(Activity::class)->findListByUser($request, $user);
+        return new JsonResponse($data);
+    }
+
+    #[Route('/token', methods: ["POST"], name: 'api_account_refresh_token')]
+    public function token(UserInterface $user, JWTTokenManagerInterface $JWTManager)  : JsonResponse
+    {
+        return new JsonResponse(['token' => $JWTManager->create($user)]);
+    }
+
+    #[Route('/upload', methods: ["POST"], name: 'api_account_upload')]
+    public function upload(Request $request)  : JsonResponse
+    {
+       
+        return new JsonResponse();
     }
 
 }

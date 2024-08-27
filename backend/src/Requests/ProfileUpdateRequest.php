@@ -22,6 +22,7 @@ class ProfileUpdateRequest extends BaseRequest
     #[Assert\Email( message: 'The email {{ value }} is not a valid email.')]
     protected string $email;
 
+    #[Assert\NotBlank]
     #[Assert\Type(type: ['digit'])]
     #[Assert\Length(
         min: 7,
