@@ -173,8 +173,40 @@ class AccountController extends AbstractController
     #[Route('/upload', methods: ["POST"], name: 'api_account_upload')]
     public function upload(Request $request)  : JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        $image = $user->getImage();
        
-        return new JsonResponse();
+        if($request->files->get('file_image'))
+        {
+            $uploadPath = $this->getParameter('kernel.project_dir') . '/public/uploads'; 
+            if(!is_dir($uploadPath)){
+                @mkdir($uploadPath);
+            }
+
+            if(!is_null($user->getImage())){
+                $file_path_current = $this->getParameter('kernel.project_dir') . '/public/'.$user->getImage(); 
+                if(file_exists($file_path_current)){
+                    @unlink($file_path_current);
+                }
+            }
+
+            $file = $request->files->get('file_image');
+            $newFileName = md5(uniqid()) . '.' . $file->guessExtension();
+            $move = $file->move($uploadPath, $newFileName);
+
+            if($move)
+            {
+                $user->setImage("uploads/".$newFileName);
+                $this->em->persist($user);
+                $this->em->flush();
+                $this->em->getRepository(Activity::class)->Create($user, "Upload Image", "Upload new user profile image");
+                $image = $user->getImage(); 
+            }
+
+        }
+
+        return new JsonResponse(["message"=> "Your profile image has been changed", "data"=> $image]);
     }
 
 }
