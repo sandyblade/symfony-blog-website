@@ -38,4 +38,51 @@ class NotificationRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($notif);
         $this->getEntityManager()->flush();
     }
+
+    public function findListByUser(array $params, User $user) : array
+    {
+        $page       = array_key_exists("page", $params) ?  $params["page"] : 1;
+        $limit      = array_key_exists("limit", $params) ?  $params["limit"] : 10;
+        $search     = array_key_exists("search", $params) ?  $params["search"] : null;
+        $order_by   = array_key_exists("order_by", $params) ?  $params["order_by"] : 0;
+        $order_sort = array_key_exists("order_sort", $params) ?  $params["order_sort"] : "desc";
+        $offset     = (($page-1) * $limit);
+
+        $columns = [
+            'x.id',
+            'x.subject',
+            'x.message',
+            'x.createdAt',
+            'x.updatedAt'
+        ];
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select($columns);
+        $qb->setMaxResults($limit);
+        $qb->setFirstResult($offset);
+        $qb->where("x.user = :user");
+        $qb->setParameter('user', $user);
+
+        if(!is_null($search)){
+            $orStatements = $qb->expr()->orX();
+            $orStatements->add($qb->expr()->like('x.subject', $qb->expr()->literal('%' . $search . '%')));
+            $orStatements->add($qb->expr()->like('x.message', $qb->expr()->literal('%' . $search . '%')));
+            $qb->andWhere($orStatements);
+        }
+
+        $qb->addOrderBy($columns[$order_by], $order_sort);
+        $qb->from(Notification::class, 'x');
+        return $qb->getQuery()->getResult();
+    }   
+
+    public function findNotifByUser(User $user, int $id) : ?Notification
+    {
+        return $this->createQueryBuilder('x')
+            ->andWhere('x.user = :user AND x.id = :id')
+            ->setParameter('user', $user)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 }
