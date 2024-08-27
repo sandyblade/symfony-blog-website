@@ -23,6 +23,7 @@ use App\Requests\ArticleRequest;
 use App\Entity\Activity;
 use App\Entity\Article;
 use App\Entity\User;
+use App\Entity\Viewer;
 
 #[Route('api/article')]
 class ArticleController extends AbstractController
@@ -130,6 +131,21 @@ class ArticleController extends AbstractController
             "updatedAt"     => $article->getUpdatedAt(),
             "author"        => $author
         ];
+
+        /** @var User $user */
+        $user  = $this->getUser();
+
+        if($user !== $article->getUser())
+        {
+            $checkViewer = $this->em->getRepository(Viewer::class)->check($article, $user);
+
+            if($checkViewer === null)
+            {
+                $this->em->getRepository(Viewer::class)->syncViewer($article, $user);
+            }
+
+        }
+
 
         return new JsonResponse(["message"=> "ok", "data"=> $payload]);
     }

@@ -15,6 +15,8 @@
 namespace App\Repository;
 
 use App\Entity\Viewer;
+use App\Entity\Article;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,28 +30,13 @@ class ViewerRepository extends ServiceEntityRepository
         parent::__construct($registry, Viewer::class);
     }
 
-    //    /**
-    //     * @return Viewer[] Returns an array of Viewer objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('v')
-    //            ->andWhere('v.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('v.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Viewer
-    //    {
-    //        return $this->createQueryBuilder('v')
-    //            ->andWhere('v.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function check(Article $article, User $user) : ?Viewer
+    {
+        return $this->createQueryBuilder('x')
+            ->andWhere('x.user = :user AND x.article = :article')
+            ->setParameter('user', $user)
+            ->setParameter('article', $article)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
