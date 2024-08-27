@@ -118,6 +118,7 @@ class ArticleController extends AbstractController
         }
 
         $author = $this->em->getRepository(User::class)->findByUserId($article->getUser());
+        $title = $article->getTitle();
 
         $payload = [
             "id"            => $article->getId(),
@@ -142,6 +143,7 @@ class ArticleController extends AbstractController
             if($checkViewer === null)
             {
                 $this->em->getRepository(Viewer::class)->syncViewer($article, $user);
+                $this->em->getRepository(Activity::class)->Create($user, "Read Article", "The user read article with title ".$title);
             }
 
         }

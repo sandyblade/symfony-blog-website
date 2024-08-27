@@ -40,6 +40,16 @@ class CommentRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function totalComment(Article $article): ?int
+    {
+        return $this->createQueryBuilder('x')
+            ->andWhere('x.article = :article')
+            ->setParameter('article', $article)
+            ->select('count(x.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function findByArticle(Article $article){
         $columns = [
             'x.id',

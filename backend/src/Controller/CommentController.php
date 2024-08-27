@@ -111,6 +111,11 @@ class CommentController extends AbstractController
         $this->em->persist($comment);
         $this->em->flush();
 
+        $totalComment = $this->em->getRepository(Comment::class)->totalComment($article);
+        $article->setTotalComment($totalComment);
+        $this->em->persist($article);
+        $this->em->flush();
+
         $payload = [
             "id"        => $comment->getId(),
             "comment"   => $comment->getComment(),
@@ -138,6 +143,11 @@ class CommentController extends AbstractController
         $title = $article->getTitle();
 
         $this->em->remove($comment);
+        $this->em->flush();
+
+        $totalComment = $this->em->getRepository(Comment::class)->totalComment($article);
+        $article->setTotalComment($totalComment);
+        $this->em->persist($article);
         $this->em->flush();
 
         $this->em->getRepository(Activity::class)->Create($user, "Delete Comment", "The user delete article comment with title ".$title);

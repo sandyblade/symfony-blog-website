@@ -39,4 +39,30 @@ class ViewerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function totalViewer(Article $article): ?int
+    {
+        return $this->createQueryBuilder('x')
+            ->andWhere('x.article = :article')
+            ->setParameter('article', $article)
+            ->select('count(x.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function syncViewer(Article $article, User $user): void
+    {
+        $viewer = new Viewer();
+        $viewer->setArticle($article);
+        $viewer->setUser($user);
+        $viewer->setStatus(0);
+        $this->getEntityManager()->persist($viewer);
+        $this->getEntityManager()->flush();
+
+        $total_viewer = $this->totalViewer($article);
+        $article->setTotalViewer($total_viewer);
+        $this->getEntityManager()->persist($article);
+        $this->getEntityManager()->flush();
+        
+    }
 }
