@@ -101,9 +101,17 @@ class AccountController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+        $user_id = $user->getId();
 
         $input = $request->getInput();
+        $email = $input->email;
 
+        $checkEmail = $this->em->getRepository(User::class)->findByEmail($email, $user_id);
+
+        if(null !== $checkEmail)
+        {
+            return new JsonResponse(["message"=>"The email has already been taken.!"], 400);
+        }
 
         return new JsonResponse(["message"=> "Your profile has been changed!!"]);
     }
